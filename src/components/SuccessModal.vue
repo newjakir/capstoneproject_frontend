@@ -56,9 +56,9 @@ export default {
             amount: this.price * 100, // the amount value is multiplied by 100 to convert to the lowest currency unit
             ref: this.reference, // Replace with a reference you generated
             showModal: false,
-            title: this.title,
-            isError: this.isError,
-            order_id: this.order_id,
+            //title: this.title,
+            //isError: this.isError,
+            //order_id: this.order_id,
         };
     },
     methods: {

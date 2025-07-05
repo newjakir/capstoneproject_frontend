@@ -179,6 +179,7 @@ export default {
             currency: "",
             taxPercentage: 0,
             tax: 0,
+            loading: false,
         };
     },
     methods: {
@@ -208,7 +209,7 @@ export default {
                     this.cart.forEach((item) => {
                         this.total += item.quantity * item.price;
                     });
-                    this.total = this.total;
+                    //this.total = this.total;
                     this.$store.commit("setTotal", this.total);
                 } else {
                     this.errorMessageCart = response.data.error;

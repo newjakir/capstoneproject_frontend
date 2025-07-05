@@ -158,22 +158,33 @@
                 <!-- Right Column - Reviews List -->
                 <div class="md:col-span-3">
                     <!-- Review Item 1 -->
-                    <div v-for="item in reviews" class="border-b border-gray-200 py-4">
-                        <div class="flex justify-between">
-                            <div>
-                                <div class="flex">
-                                    <svg v-for="i in 5" :key="`r1-${i}`" class="w-6 h-6 fill-current" :class="i <= item.rating ? 'text-gray-800' : 'text-gray-300'"
-                                        viewBox="0 0 24 24">
-                                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                                    </svg>
-                                </div>
-                                <p class="text-gray-600 mt-1">{{ formatDate(item.created_at) }}</p>
-                            </div>
-                            <div class="text-right">
-                                <p class="font-medium">{{item.username}}</p>
-                            </div>
+                    <div
+                    v-for="(item, index) in reviews"
+                    :key="item.id || `review-${index}`"
+                    class="border-b border-gray-200 py-4"
+                    >
+                    <div class="flex justify-between">
+                        <div>
+                        <div class="flex">
+                            <svg
+                            v-for="i in 5"
+                            :key="`r1-${i}`"
+                            class="w-6 h-6 fill-current"
+                            :class="i <= item.rating ? 'text-gray-800' : 'text-gray-300'"
+                            viewBox="0 0 24 24"
+                            >
+                            <path
+                                d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
+                            />
+                            </svg>
                         </div>
-                        <p class="text-gray-800">{{ item.review }}</p>
+                        <p class="text-gray-600 mt-1">{{ formatDate(item.created_at) }}</p>
+                        </div>
+                        <div class="text-right">
+                        <p class="font-medium">{{ item.username }}</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-800">{{ item.review }}</p>
                     </div>
                 </div>
             </div>
@@ -246,6 +257,13 @@ export default {
     async created() {
         await this.fetchProductData();
         await this.fetchAllProducts();
+
+        try {
+            let reviews = await axios.get(`/product-reviews/${this.$route.params.id}/`);
+            this.reviews = reviews.data;
+        } catch (error) {
+            console.error("Error fetching reviews:", error);
+        }
     },
     watch: {
         "$route.params.id": {
@@ -431,24 +449,24 @@ export default {
             return this.products.filter((product) => product.is_featured);
         },
     },
-    async created() {
-        let res = await axios.get(`/products/${this.$route.params.id}/`);
-        this.product = res.data;
-        this.loaded = true;
-        this.activeImage = this.product.image;
+    // async created() {
+    //     let res = await axios.get(`/products/${this.$route.params.id}/`);
+    //     this.product = res.data;
+    //     this.loaded = true;
+    //     this.activeImage = this.product.image;
 
-        let res1 = await axios.get("/products/");
-        this.products = res1.data.results.map((product) => {
-            return product;
-        });
-        this.set_products(this.products);
+    //     let res1 = await axios.get("/products/");
+    //     this.products = res1.data.results.map((product) => {
+    //         return product;
+    //     });
+    //     this.set_products(this.products);
 
-        let reviews = await axios.get(`/product-reviews/${this.$route.params.id}/`);
+    //     let reviews = await axios.get(`/product-reviews/${this.$route.params.id}/`);
 
-        this.reviews = reviews.data;
+    //     this.reviews = reviews.data;
 
 
-    },
+    // },
 
 };
 </script>

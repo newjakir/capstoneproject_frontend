@@ -117,7 +117,7 @@ export default {
             } catch (error) {
                 console.error('Error loading wishlist:', error);
             } finally {
-                loading = false;
+                this.loading = false;
             }
         },
         async deleteItem(index) {
