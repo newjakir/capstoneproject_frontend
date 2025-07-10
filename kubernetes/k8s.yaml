@@ -1,0 +1,71 @@
+# --- capsp‑frontend Deployment (fixed ports) ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: capsp-frontend
+  namespace: jakir007-capsp
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: capsp-frontend}
+  strategy: {type: Recreate}
+  template:
+    metadata:
+      labels: {app: capsp-frontend}
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: vue
+          image: newjakir/capsp-frontend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80          # ← now 80
+          envFrom:
+            - secretRef: {name: capsp-frontend-secret}
+          readinessProbe:               # ← probe checks port 80
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests: {memory: "128Mi", cpu: "100m"}
+            limits:   {memory: "256Mi", cpu: "200m"}
+
+---
+# ────────────── Frontend Service ───────────────────────────────────────────────
+apiVersion: v1
+kind: Service
+metadata:
+  name: capsp-frontend
+  namespace: jakir007-capsp
+spec:
+  type: LoadBalancer
+  selector:
+    app: capsp-frontend
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+
+---
+# ────────────── Frontend Ingress ──────────────────────────────────────────────
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: capsp-frontend
+  namespace: jakir007-capsp
+  annotations:
+spec:
+  rules:
+    - host: fs.jakirdev.com                             # change to real domain
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: capsp-frontend
+                port:
+                  number: 80
