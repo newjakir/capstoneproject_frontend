@@ -48,24 +48,3 @@ spec:
       port: 80
       targetPort: 80
 
----
-# ────────────── Frontend Ingress ──────────────────────────────────────────────
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: capsp-frontend
-  namespace: jakir007-capsp
-  annotations:
-spec:
-  ingressClassName: nginx
-  rules:
-    - host: fs.jakirdev.com                             # change to real domain
-      http:
-        paths:
-          - path: "/"
-            pathType: Prefix
-            backend:
-              service:
-                name: capsp-frontend
-                port:
-                  number: 80
